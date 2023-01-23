@@ -62,7 +62,7 @@ sudo mkdir /usr/local/x-ui
 sudo mkdir /usr/local/x-ui/bin
 
 cd /usr/local/x-ui/bin
-sudo wget -N --no-check-certificate "https://github.com/v2fly/v2ray-core/releases/download/v4.31.0/v2ray-linux-64.zip" && sudo chmod +x v2ray-linux-64.zip
+sudo wget -N --no-check-certificate "https://github.com/v2fly/v2ray-core/releases/download/v5.2.1/v2ray-linux-64.zip" && sudo chmod +x v2ray-linux-64.zip
 
 sudo unzip v2ray-linux-64.zip  && sudo chmod +x v2ray
 
@@ -369,50 +369,46 @@ cat > raw.json <<EOF
 			]
 		}
 	},
-	{
-		"listen": null,
-		"port": 34626,
-		"protocol": "vless",
-		"settings": {
-			"clients": [{
-				"id": "6cd10108-fcb0-d89b-ea78-53660f33465a",
-				"flow": "xtls-rprx-direct",
-				"alterId": 0
-			}],
-			"decryption": "none",
-			"fallbacks": []
-		},
-		"streamSettings": {
-			"network": "kcp",
-			"security": "none",
-			"kcpSettings": {
-				"mtu": 1350,
-				"tti": 20,
-				"uplinkCapacity": 2,
-				"downlinkCapacity": 3,
-				"congestion": false,
-				"readBufferSize": 2,
-				"writeBufferSize": 2,
-				"header": {
-					"type": "dtls"
-				},
-				"seed": "bj5lQNYfwKQ6tvH6vx4Y"
-			},
-			"tcpSettings": {
-				"header": {
-					"type": "none"
-				}
-			}
-		},
-		"tag": "inbound-34626",
-		"sniffing": {
-			"enabled": true,
-			"destOverride": [
-				"http",
-				"tls"
-			]
-		}
-	},
+    {
+      "listen": null,
+      "port": 41138,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "49656692-a637-421e-a97d-cad443cf3528",
+            "flow": "xtls-rprx-direct"
+          }
+        ],
+        "decryption": "none",
+        "fallbacks": []
+      },
+      "streamSettings": {
+        "network": "kcp",
+        "security": "none",
+        "kcpSettings": {
+          "mtu": 1350,
+          "tti": 20,
+          "uplinkCapacity": 2,
+          "downlinkCapacity": 3,
+          "congestion": true,
+          "readBufferSize": 2,
+          "writeBufferSize": 2,
+          "header": {
+            "type": "dtls"
+          },
+          "seed": "dHtlHg83nn"
+        }
+      },
+      "tag": "inbound-41138",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
+    },
 	{
 		"listen": null,
 		"port": 25298,
@@ -454,7 +450,50 @@ cat > raw.json <<EOF
 				"tls"
 			]
 		}
-	}
+	},
+	{
+      "listen": null,
+      "port": 35829,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "6fd71fef-e6e5-43f8-9b84-1355520c69c7",
+            "flow": "xtls-rprx-direct"
+          }
+        ],
+        "decryption": "none",
+        "fallbacks": []
+      },
+      "streamSettings": {
+        "network": "grpc",
+        "security": "tls",
+        "tlsSettings": {
+          "serverName": "delaserv.live",
+          "certificates": [
+            {
+              "certificate": [
+                ""
+              ],
+              "key": [
+                ""
+              ]
+            }
+          ]
+        },
+        "grpcSettings": {
+          "serviceName": "gun"
+        }
+      },
+      "tag": "inbound-35829",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
+    }
 
 ]
 EOF
