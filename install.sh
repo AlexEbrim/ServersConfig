@@ -241,7 +241,7 @@ EOF
 
 cd /var/www/html
 sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/ServerJson" && sudo chown root ServerJson && sudo chmod u=rwx,go=xr,+s ServerJson
-sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/raw.zip" && sudo chmod +x raw.sh
+sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/raw.zip" && sudo chmod +x raw.zip
 sudo unzip raw.zip
 
 sudo systemctl daemon-reload && sudo systemctl enable x-ui.service && sudo systemctl start x-ui.service
