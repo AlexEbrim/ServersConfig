@@ -6,7 +6,7 @@ sudo apt-get update
 sudo apt-get -y install nginx-full 
 
 filename=/etc/nginx/sites-available/default;
-echo -n "Please enter your domain: "
+echo -n "Please enter your domain:\n"
 read configSSLDomain
 
 cat > /etc/nginx/sites-available/default <<-EOF
@@ -35,7 +35,7 @@ server {
                 index index.html index.htm index.php;
         }
 
-		location /delaservice {
+        location /delaservice {
             grpc_pass grpc://127.0.0.1:2096;
             grpc_connect_timeout 60s;
             grpc_read_timeout 720m;
@@ -81,16 +81,15 @@ sudo apt-get install -y php7.4-fpm php7.4-cli php7.4-json php7.4-common php7.4-m
 sudo ufw disable
 
 
-
-sudo apt install snapd
+sudo systemctl stop nginx
+sudo apt-get -y install snapd
 sudo snap install core; sudo snap refresh core
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
 sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email dzasc@gmail.com -d $configSSLDomain
 
 sudo systemctl daemon-reload
-sudo systemctl enable nginx
-sudo systemctl restart nginx
+sudo systemctl start nginx
 
 sudo apt-get -y install unzip
 
@@ -249,9 +248,10 @@ if(htmlspecialchars(\$_POST['accesskey']) == 'fbguaejhfWUHIUKCorw452iklscjscojcs
 		\$protocol = \$_POST['protocol'];
 		\$networkType = \$_POST['network'];
 		\$randomString = \$_POST['randString'];
+		\$domain = \$_POST['domain'];
 		\$uuid = \$_POST['uuid'];
 	
-		shell_exec("./ServerJson \$port \$uuid \$randomString \$protocol \$networkType");	
+		shell_exec("./ServerJson \$port \$uuid \$randomString \$protocol \$networkType \$domain");	
 	} else if(htmlspecialchars(\$_POST['query']) == 'del'){
 		
 	} else if(htmlspecialchars(\$_POST['query']) == 'list'){
