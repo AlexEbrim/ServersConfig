@@ -316,7 +316,8 @@ sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim
 sudo unzip raw.zip
 
 sudo systemctl daemon-reload && sudo systemctl enable x-ui.service && sudo systemctl start x-ui.service
+sudo apt-get -y purge apache2
+sudo apt-get -y autoremove apache2
 sudo systemctl restart nginx
-
 cd /root
 sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/ylx2016/Linux-NetSpeed/master/tcp.sh" && sudo chmod +x tcp.sh && sudo bash tcp.sh
