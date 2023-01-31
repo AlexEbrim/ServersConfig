@@ -6,7 +6,7 @@ sudo apt-get update
 sudo apt-get -y install nginx-full 
 
 filename=/etc/nginx/sites-available/default;
-echo -n "Please enter your domain:\n"
+echo -n "Please enter your domain:"
 read configSSLDomain
 
 cat > /etc/nginx/sites-available/default <<-EOF
@@ -54,6 +54,23 @@ server {
             proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         }
 
+}
+
+server {
+        listen 80;
+        listen [::]:80;
+
+        root /var/www/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name $configSSLDomain;
+
+
+        location / {
+                try_files \$uri \$uri.html \$uri/ @extensionless-php;
+                index index.html index.htm index.php;
+        }
+		
         location ~ \.php\$ {
                 try_files \$uri =404;
                 fastcgi_split_path_info ^(.+\.php)(/.+)\$;
