@@ -116,7 +116,25 @@ cat > config.json <<EOF
     "dns": null,
     "fakeDns": null,
     "inbounds": [
-        
+        {
+			"port": 2098,	
+			"listen": "127.0.0.1",
+            "protocol": "vless",
+            "settings": {
+                "clients": [
+                    { "id": "", "level": 0, "email": "password11@gmail.com" }
+                ],
+                "decryption": "none"
+            },
+            "streamSettings": {
+                "network": "ws",
+                "security": "none",
+                "wsSettings": {
+					"acceptProxyProtocol": true,
+                    "path": "/delaweb" 
+                }
+            }
+        }
     ],
     "log": null,
     "outbounds": [
