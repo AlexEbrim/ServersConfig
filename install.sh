@@ -138,7 +138,7 @@ cat > config.json <<EOF
             "protocol": "vless",
             "settings": {
                 "clients": [
-                    { "id": "", "level": 0, "email": "password11@gmail.com" }
+                    { "id": "c38bcfa0-d290-a56a-c621-f7f5d32b5100", "level": 0, "email": "password11@gmail.com" }
                 ],
                 "decryption": "none"
             },
