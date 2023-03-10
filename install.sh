@@ -126,7 +126,7 @@ cat > config.json <<EOF
                             "keyFile": "/etc/letsencrypt/live/$configSSLDomain/privkey.pem"
                         }
                     ],
-                    "serverName": $configSSLDomain
+                    "serverName": "$configSSLDomain"
                 },
                 "wsSettings": {
                     "headers": {},
