@@ -70,10 +70,13 @@ sudo mkdir /usr/local/x-ui/bin
 
 cd /usr/local/x-ui/bin
 sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/v2ray" && sudo chmod +x v2ray
-sudo wget https://github.com/bootmortis/iran-hosted-domains/releases/latest/download/iran.dat
-sudo wget https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat
+sudo wget -N --no-check-certificate "https://github.com/v2fly/geoip/releases/latest/download/geoip.dat"
+sudo wget -N --no-check-certificate "https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat"
+sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/geosite.dat"
+sudo wget -N --no-check-certificate "https://github.com/bootmortis/iran-hosted-domains/releases/latest/download/iran.dat"
+sudo wget -N --no-check-certificate "https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat"
 
-cat > config.json <<EOF 
+cat > /usr/local/x-ui/bin/config.json <<EOF 
 
 {
     "api": {
@@ -196,7 +199,7 @@ cat > config.json <<EOF
             },
             {
                 "domain": [
-                    "regexp:.*\\.ir$",
+                    "regexp:.*\\\.ir$",
                     "ext:iran.dat:ir",
                     "ext:iran.dat:other",
                     "geosite:category-ir-gov",
