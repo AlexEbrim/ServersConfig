@@ -158,6 +158,12 @@ cat > config.json <<EOF
         }
     ],
     "policy": {
+		"levels": {
+            "0": {
+                "inboundSpeed": "8mbps",
+                "outboundSpeed": "14mbps"
+            }
+        },
         "system": {
             "statsInboundDownlink": false,
             "statsInboundUplink": false
