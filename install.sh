@@ -164,8 +164,8 @@ cat > /usr/local/x-ui/bin/config.json <<EOF
     "policy": {
 	"levels": {
             "0": {
-                "inboundSpeed": "8mbps",
-                "outboundSpeed": "14mbps"
+                "inboundSpeed": "12mbps",
+                "outboundSpeed": "16mbps"
             }
         },
         "system": {
