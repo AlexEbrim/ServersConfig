@@ -12,51 +12,6 @@ read configSSLDomain
 cat > /etc/nginx/sites-available/default <<-EOF
 
 server {
-        listen 8443 ssl http2;
-        listen [::]:8443 http2;
-
-        ssl_certificate       /etc/letsencrypt/live/$configSSLDomain/fullchain.pem;
-        ssl_certificate_key   /etc/letsencrypt/live/$configSSLDomain/privkey.pem;
-        ssl_protocols         TLSv1.2 TLSv1.3;
-        ssl_ciphers           TLS-AES-256-GCM-SHA384:TLS-CHACHA20-POLY1305-SHA256:TLS-AES-128-GCM-SHA256:TLS-AES-128-CCM-8-SHA256:TLS-AES-128-CCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256;
-
-        ssl_stapling on;
-        ssl_stapling_verify on;
-        add_header Strict-Transport-Security "max-age=31536000";
-
-        root /var/www/html;
-        index index.html index.htm index.nginx-debian.html;
-
-        server_name $configSSLDomain;
-
-
-        location / {
-                try_files \$uri \$uri.html \$uri/ @extensionless-php;
-                index index.html index.htm index.php;
-        }
-
-        location /delaservice {
-            grpc_pass grpc://127.0.0.1:2096;
-            grpc_connect_timeout 60s;
-            grpc_read_timeout 720m;
-            grpc_send_timeout 720m;
-            grpc_set_header X-Real-IP \$remote_addr;
-            grpc_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        }
-
-         location /delaweb {
-            proxy_pass http://127.0.0.1:2098;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade \$http_upgrade;
-            proxy_set_header Connection "upgrade";
-            proxy_set_header Host \$http_host;
-            proxy_set_header X-Real-IP \$remote_addr;
-            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        }
-
-}
-
-server {
         listen 80;
         listen [::]:80;
 
@@ -103,7 +58,7 @@ sudo apt-get -y install snapd
 sudo snap install core; sudo snap refresh core
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
-sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email dzasc@gmail.com -d $configSSLDomain
+sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email rxgbhsxg@gmail.com -d $configSSLDomain
 
 sudo systemctl daemon-reload
 sudo systemctl start nginx
@@ -114,9 +69,9 @@ sudo mkdir /usr/local/x-ui
 sudo mkdir /usr/local/x-ui/bin
 
 cd /usr/local/x-ui/bin
-sudo wget -N --no-check-certificate "https://github.com/v2fly/v2ray-core/releases/download/v5.2.1/v2ray-linux-64.zip" && sudo chmod +x v2ray-linux-64.zip
-
-sudo unzip v2ray-linux-64.zip  && sudo chmod +x v2ray
+sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/v2ray" && sudo chmod +x v2ray
+sudo wget https://github.com/bootmortis/iran-hosted-domains/releases/latest/download/iran.dat
+sudo wget https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat
 
 cat > config.json <<EOF 
 
@@ -133,23 +88,52 @@ cat > config.json <<EOF
     "fakeDns": null,
     "inbounds": [
         {
-			"port": 2098,	
-			"listen": "127.0.0.1",
-            "protocol": "vless",
+            "listen": "127.0.0.1",
+            "port": 8080,
+            "protocol": "dokodemo-door",
+            "settings": {
+                "address": "127.0.0.1"
+            },
+            "sniffing": null,
+            "streamSettings": null,
+            "tag": "api"
+        },
+		{
+            "listen": null,
+            "port": 443,
+            "protocol": "vmess",
             "settings": {
                 "clients": [
-                    { "id": "c38bcfa0-d290-a56a-c621-f7f5d32b5100", "level": 0, "email": "password11@gmail.com" }
+                    
                 ],
-                "decryption": "none"
+                "decryption": "none",
+                "fallbacks": []
+            },
+            "sniffing": {
+                "destOverride": [
+                    "http",
+                    "tls"
+                ],
+                "enabled": true
             },
             "streamSettings": {
                 "network": "ws",
-                "security": "none",
+                "security": "tls",
+                "tlsSettings": {
+                    "certificates": [
+                        {
+                            "certificateFile": "/etc/letsencrypt/live/$configSSLDomain/fullchain.pem",
+                            "keyFile": "/etc/letsencrypt/live/$configSSLDomain/privkey.pem"
+                        }
+                    ],
+                    "serverName": $configSSLDomain
+                },
                 "wsSettings": {
-					"acceptProxyProtocol": true,
-                    "path": "/delaweb" 
+                    "headers": {},
+                    "path": "/delawebs"
                 }
-            }
+            },
+            "tag": "add_user"
         }
     ],
     "log": null,
@@ -191,7 +175,8 @@ cat > config.json <<EOF
             },
             {
                 "ip": [
-                    "geoip:private"
+                    "geoip:private",
+                    "geoip:ir"
                 ],
                 "outboundTag": "blocked",
                 "type": "field"
@@ -202,6 +187,42 @@ cat > config.json <<EOF
                     "bittorrent"
                 ],
                 "type": "field"
+            },
+            {
+                "domain": [
+                    "regexp:.*\\.ir$",
+                    "ext:iran.dat:ir",
+                    "ext:iran.dat:other",
+                    "geosite:category-ir-gov",
+                    "geosite:category-ir-news",
+                    "geosite:category-ir-bank",
+                    "geosite:category-ir-tech",
+                    "geosite:category-ir-travel",
+                    "geosite:category-ir-shopping",
+                    "geosite:category-ir-insurance",
+                    "geosite:category-ir-scholar",
+                    "snapp",
+                    "digikala",
+                    "tapsi",
+                    "blogfa",
+                    "bank",
+                    "sb24.com",
+                    "sheypoor.com",
+                    "tebyan.net",
+                    "beytoote.com",
+                    "telewebion.com",
+                    "Film2movie.ws",
+                    "Setare.com",
+                    "Filimo.com",
+                    "Torob.com",
+                    "Tgju.org",
+                    "Sarzamindownload.com",
+                    "downloadha.com",
+                    "P30download.com",
+                    "Sanjesh.org"
+                ],
+                "outboundTag": "blocked",
+                "type": "field"
             }
         ]
     },
@@ -211,7 +232,7 @@ cat > config.json <<EOF
 
 
 EOF
-sudo chmod +x config.json
+sudo chmod 777 config.json
 
 cat > /etc/systemd/system/x-ui.service <<EOF 
 
@@ -235,7 +256,6 @@ LimitNOFILE=1000000
 WantedBy=multi-user.target
 
 EOF
-
 
 cat > /var/www/html/dadd.php <<EOF 
 
@@ -261,14 +281,9 @@ if (\$_SERVER['REQUEST_METHOD'] != 'POST'){
 
 if(htmlspecialchars(\$_POST['accesskey']) == 'fbguaejhfWUHIUKCorw452iklscjscojcs458csfcs'){
 	if(htmlspecialchars(\$_POST['query']) == 'add'){
-		\$port = \$_POST['port'];
-		\$protocol = \$_POST['protocol'];
-		\$networkType = \$_POST['network'];
-		\$randomString = \$_POST['randString'];
-		\$domain = \$_POST['domain'];
 		\$uuid = \$_POST['uuid'];
-	
-		shell_exec("./ServerJson \$port \$uuid \$randomString \$protocol \$networkType \$domain");	
+		\$user_id = \$_POST['user_id'];
+		echo shell_exec("./addClient \$uuid \$user_id");
 	} else if(htmlspecialchars(\$_POST['query']) == 'del'){
 		
 	} else if(htmlspecialchars(\$_POST['query']) == 'list'){
@@ -311,13 +326,12 @@ if(htmlspecialchars(\$_POST['accesskey']) == 'fbguaejhfWUHIUKCorw452iklscjscojcs
 EOF
 
 cd /var/www/html
-sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/ServerJson" && sudo chown root ServerJson && sudo chmod u=rwx,go=xr,+s ServerJson
-sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/raw.zip" && sudo chmod +x raw.zip
-sudo unzip raw.zip
+#sudo chown root ServerJson && sudo chmod u=rwx,go=xr,+s ServerJson
+sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/addClient" && sudo chmod +x addClient
 
 sudo systemctl daemon-reload && sudo systemctl enable x-ui.service && sudo systemctl start x-ui.service
 sudo apt-get -y purge apache2
 sudo apt-get -y autoremove apache2
 sudo systemctl restart nginx
-cd /root
-sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/ylx2016/Linux-NetSpeed/master/tcp.sh" && sudo chmod +x tcp.sh && sudo bash tcp.sh
+#cd /root
+#sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/ylx2016/Linux-NetSpeed/master/tcp.sh" && sudo chmod +x tcp.sh && sudo bash tcp.sh
