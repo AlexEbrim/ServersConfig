@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.addclient";
+option java_outer_classname = "addClient";
+option objc_class_prefix = "srv";
+
+package addclient;
+
+// The greeting service definition.
+service AddClient {
+  // Sends a greeting
+  rpc sendRequest (ServerRequest) returns (ServerResponse) {}
+}
+
+// The request message containing the user's name.
+message ServerRequest {
+  string uuid = 1;
+  string email = 2;
+}
+
+// The response message containing the greetings
+message ServerResponse {
+  string message = 1;
+}
