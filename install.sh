@@ -300,12 +300,7 @@ sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim
 sudo unzip grpc.zip && sudo rm -rf grpc.zip
 sudo cp grpc.so /usr/lib/php/20170718/grpc.so;
 #sudo chown root ServerJson && sudo chmod u=rwx,go=xr,+s ServerJson
-#OUTPUT= php -i | grep /.+/php.ini -oE
-if ! grep -Fxq 'extension="grpc.so"' /etc/php/7.2/cli/php.ini; then
-    line=$(cat 'php.ini' | grep -n '; Module Settings ;' | grep -o '^[0-9]*')
-    line=$((line - 2))
-    sudo sed -i ${line}'i\extension="grpc.so"' 'php.ini'
-fi
+
 sudo service php7.2-fpm restart
 
 cd /root
