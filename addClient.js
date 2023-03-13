@@ -42,7 +42,7 @@ fsPromises.readFile('/usr/local/x-ui/bin/config.json', 'utf8')
                   return;
                 }
 
-                mainJson["inbounds"][1]["settings"]["clients"].push({id: call.request.uuid, email: call.request.email, alterId: 64, level: 0});
+                mainJson["inbounds"][1]["settings"]["clients"].push({id: call.request.uuid, email: call.request.email + "@delavpn.com", alterId: 64, level: 0});
                 fsPromises.writeFile('/usr/local/x-ui/bin/config.json', JSON.stringify(mainJson))
                         .then(  async () => { 
                           exec('/usr/local/x-ui/bin/api api adi --server=127.0.0.1:8080 --uuid=' + call.request.uuid + " --id=" + call.request.email, (err, output) => {
