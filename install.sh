@@ -295,9 +295,10 @@ curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
 sudo unzip api.zip && sudo sudo rm -rf api.zip
 sudo composer install
-cd /usr/lib/php/20170718
+
 sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/grpc.zip"
 sudo unzip grpc.zip && sudo rm -rf grpc.zip
+sudo cp grpc.so /usr/lib/php/20170718/grpc.so;
 #sudo chown root ServerJson && sudo chmod u=rwx,go=xr,+s ServerJson
 OUTPUT= php -i | grep /.+/php.ini -oE
 if ! grep -Fxq 'extension="grpc.so"' ${OUTPUT}; then
@@ -308,7 +309,7 @@ fi
 sudo service php7.2-fpm restart
 
 cd /root
-sudo systemctl daemon-reload && sudo systemctl enable x-ui.service && sudo systemctl start x-ui.service
+sudo systemctl daemon-reload && sudo systemctl enable x-ui.service && sudo systemctl start x-ui.service && sudo systemctl enable api.service && sudo systemctl start api.service
 sudo apt-get -y purge apache2
 sudo apt-get -y autoremove apache2
 sudo systemctl restart nginx
