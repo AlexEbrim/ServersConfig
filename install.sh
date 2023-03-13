@@ -277,7 +277,6 @@ cat > /etc/systemd/system/api.service <<EOF
 
 [Unit]
 Description=addClient.js
-Documentation=addClient
 After=network.target
 
 [Service]
