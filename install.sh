@@ -80,6 +80,9 @@ sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim
 sudo wget -N --no-check-certificate "https://github.com/bootmortis/iran-hosted-domains/releases/latest/download/iran.dat"
 sudo wget -N --no-check-certificate "https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat"
 
+sudo npm install @grpc/grpc-js
+sudo npm install @grpc/proto-loader
+
 cat > /usr/local/x-ui/bin/config.json <<EOF 
 
 {
