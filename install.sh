@@ -292,6 +292,8 @@ WantedBy=multi-user.target
 
 EOF
 
+
+sudo mkdir /var/www/html
 cd /var/www/html/
 sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/api.zip"
 curl -sS https://getcomposer.org/installer | php
