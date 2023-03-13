@@ -2,7 +2,8 @@
 
 
 sudo apt-get update
-
+sudo apt install nodejs
+sudo apt install npm
 sudo apt-get -y install nginx-full 
 
 filename=/etc/nginx/sites-available/default;
@@ -47,8 +48,8 @@ EOF
 sudo apt -y install software-properties-common
 sudo add-apt-repository ppa:ondrej/php
 sudo apt-get update
-sudo apt -y install php7.4
-sudo apt-get install -y php7.4-fpm php7.4-cli php7.4-json php7.4-common php7.4-mysql php7.4-zip php7.4-gd php7.4-mbstring php7.4-curl php7.4-xml php7.4-bcmath
+sudo apt -y install php7.2
+sudo apt-get install -y php7.2-fpm php7.2-cli php7.2-json php7.2-common php7.2-mysql php7.2-zip php7.2-gd php7.2-mbstring php7.2-curl php7.2-xml php7.2-bcmath autoconf zlib1g-dev php7.2-dev php-pear
 
 sudo ufw disable
 
@@ -71,6 +72,8 @@ sudo mkdir /usr/local/x-ui/bin
 cd /usr/local/x-ui/bin
 sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/v2ray" && sudo chmod +x v2ray
 sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/api" && sudo chmod +x api
+sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/addClient.js"
+sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/server.proto"
 sudo wget -N --no-check-certificate "https://github.com/v2fly/geoip/releases/latest/download/geoip.dat"
 sudo wget -N --no-check-certificate "https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat"
 sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/geosite.dat"
@@ -267,78 +270,44 @@ WantedBy=multi-user.target
 
 EOF
 
-cat > /var/www/html/dadd.php <<EOF 
+cat > /etc/systemd/system/api.service <<EOF 
 
-<?php
+[Unit]
+Description=addClient.js
+Documentation=addClient
+After=network.target
 
-if (\$_SERVER['REQUEST_METHOD'] != 'POST'){
-		header("HTTP/1.0 404 Not Found");
-		echo "<html><head><title>404 Not Found</title></head>
-		<body bgcolor='white'>
-		<center><h1>404 Not Found</h1></center>
-		<hr><center>nginx/1.14.0 (Ubuntu)</center>
+[Service]
+Environment=NODE_PORT=5000
+Type=simple
+User=root
+ExecStart=/usr/bin/node /usr/local/x-ui/bin/addClient.js
+Restart=on-failure
 
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		</body></html>";
-		return;
-}
-
-
-if(htmlspecialchars(\$_POST['accesskey']) == 'fbguaejhfWUHIUKCorw452iklscjscojcs458csfcs'){
-	if(htmlspecialchars(\$_POST['query']) == 'add'){
-		\$uuid = \$_POST['uuid'];
-		\$user_id = \$_POST['user_id'];
-		echo shell_exec("./addClient \$uuid \$user_id");
-	} else if(htmlspecialchars(\$_POST['query']) == 'del'){
-		
-	} else if(htmlspecialchars(\$_POST['query']) == 'list'){
-		\$strJsonFileContents = file_get_contents("/usr/local/x-ui/bin/config.json");
-		echo \$strJsonFileContents;
-	} else {
-		header("HTTP/1.0 404 Not Found");
-		echo "<html><head><title>404 Not Found</title></head>
-		<body bgcolor='white'>
-		<center><h1>404 Not Found</h1></center>
-		<hr><center>nginx/1.14.0 (Ubuntu)</center>
-
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		</body></html>";
-	}
-} else {
-		header("HTTP/1.0 404 Not Found");
-		echo "<html><head><title>404 Not Found</title></head>
-		<body bgcolor='white'>
-		<center><h1>404 Not Found</h1></center>
-		<hr><center>nginx/1.14.0 (Ubuntu)</center>
-
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		<!-- a padding to disable MSIE and Chrome friendly error page -->
-		</body></html>";
-
-}
-
-?>
+[Install]
+WantedBy=multi-user.target
 
 EOF
 
-cd /var/www/html
+cd /var/www/html/
+sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/api.zip"
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/local/bin/composer
+sudo unzip api.zip && sudo sudo rm -rf api.zip
+sudo composer install
+cd /usr/lib/php/20170718
+sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/grpc.zip"
+sudo unzip grpc.zip && sudo rm -rf grpc.zip
 #sudo chown root ServerJson && sudo chmod u=rwx,go=xr,+s ServerJson
-sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/addClient" && sudo chmod +x addClient
+OUTPUT= php -i | grep /.+/php.ini -oE
+if ! grep -Fxq 'extension="grpc.so"' ${OUTPUT}; then
+    line=$(cat 'php.ini' | grep -n '; Module Settings ;' | grep -o '^[0-9]*')
+    line=$((line - 2))
+    sudo sed -i ${line}'i\extension="grpc.so"' 'php.ini'
+fi
+sudo service php7.2-fpm restart
 
+cd /root
 sudo systemctl daemon-reload && sudo systemctl enable x-ui.service && sudo systemctl start x-ui.service
 sudo apt-get -y purge apache2
 sudo apt-get -y autoremove apache2
