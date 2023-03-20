@@ -8,6 +8,13 @@ sudo apt-get install -y npm
 sudo npm install -g npm@latest
 sudo apt-get -y install nginx-full 
 
+sudo apt-get install ufw
+sudo ufw allow 56777
+sudo ufw allow 443
+sudo ufw allow 8080
+sudo ufw allow 80
+
+
 filename=/etc/nginx/sites-available/default;
 echo -n "Please enter your domain:"
 read configSSLDomain
@@ -172,8 +179,8 @@ cat > /usr/local/x-ui/bin/config.json <<EOF
     "policy": {
 	"levels": {
             "0": {
-                "inboundSpeed": "12mbps",
-                "outboundSpeed": "16mbps"
+                "inboundSpeed": "18mbps",
+                "outboundSpeed": "18mbps"
             }
         },
         "system": {
