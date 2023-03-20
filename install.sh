@@ -13,7 +13,7 @@ sudo ufw allow 56777
 sudo ufw allow 443
 sudo ufw allow 8080
 sudo ufw allow 80
-
+sudo ufw enable
 
 filename=/etc/nginx/sites-available/default;
 echo -n "Please enter your domain:"
