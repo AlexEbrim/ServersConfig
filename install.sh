@@ -8,7 +8,7 @@ sudo apt-get install -y npm
 sudo npm install -g npm@latest
 sudo apt-get -y install nginx-full 
 
-sudo apt-get install ufw
+sudo apt-get install -y ufw
 sudo ufw allow 56777
 sudo ufw allow 443
 sudo ufw allow 8080
