@@ -27,7 +27,7 @@ server {
   server_name           $configSSLDomain;
 		
 		location /delawebs {
-			proxy_pass http://127.0.0.1:$configV2rayPort;
+			proxy_pass http://127.0.0.1:443;
             proxy_http_version 1.1;
             proxy_set_header Upgrade \$http_upgrade;
             proxy_set_header Connection "upgrade";
