@@ -8,13 +8,41 @@ sudo apt-get install -y npm
 sudo npm install -g npm@latest
 sudo apt-get -y install nginx-full 
 
-sudo apt -y install ufw && sudo ufw allow 56777 && sudo ufw allow 443 && sudo ufw allow 8080 && sudo ufw allow 80 && sudo ufw enable
+sudo apt -y install ufw && sudo ufw allow 56777 && sudo ufw allow 443 && sudo ufw allow 8443 && sudo ufw allow 8080 && sudo ufw allow 80 && sudo ufw enable
 
 filename=/etc/nginx/sites-available/default;
 echo -n "Please enter your domain:"
 read configSSLDomain
 
 cat > /etc/nginx/sites-available/default <<-EOF
+
+server {
+  listen 8443 ssl http2;
+  listen [::]:8443 http2;
+  
+  ssl_certificate       /etc/letsencrypt/live/$configSSLDomain/fullchain.pem;
+  ssl_certificate_key   /etc/letsencrypt/live/$configSSLDomain/privkey.pem;
+  ssl_protocols         TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers           HIGH:!aNULL:!MD5;
+  server_name           $configSSLDomain;
+  
+  access_log /var/log/nginx/access.log main;
+		
+		location /delawebs {
+			proxy_pass http://127.0.0.1:$configV2rayPort;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade \$http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host \$http_host;
+
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+		}
+
+  location / {
+    return 204;
+  }
+}
 
 server {
         listen 80;
@@ -43,17 +71,7 @@ server {
         location @extensionless-php {
                 rewrite ^(.*)\$ \$1.php last;
         }
-		
-		location /delawebs {
-			proxy_pass http://127.0.0.1:443/delawebs;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade \$http_upgrade;
-            proxy_set_header Connection "upgrade";
-            proxy_set_header Host \$http_host;
-			proxy_set_header X-Real-IP \$remote_addr;
-            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto \$scheme;
-		}
+
 }
 
 EOF
