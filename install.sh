@@ -88,7 +88,7 @@ sudo apt-get -y install snapd
 sudo snap install core; sudo snap refresh core
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
-sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email rxgbhsxg@gmail.com -d $configSSLDomain
+sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email adsas@gmail.com -d $configSSLDomain
 
 sudo systemctl daemon-reload
 sudo systemctl start nginx
