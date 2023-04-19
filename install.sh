@@ -88,7 +88,7 @@ sudo apt-get -y install snapd
 sudo snap install core; sudo snap refresh core
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
-sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email adsas@gmail.com -d $configSSLDomain
+sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email wadqca@gmail.com -d $configSSLDomain
 
 sudo systemctl daemon-reload
 sudo systemctl start nginx
@@ -99,15 +99,17 @@ sudo mkdir /usr/local/x-ui
 sudo mkdir /usr/local/x-ui/bin
 
 cd /usr/local/x-ui/bin
-sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/v2ray" && sudo chmod +x v2ray
-sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/api" && sudo chmod +x api
-sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/addClient.js"
-sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/server.proto"
+#sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/v2ray" && sudo chmod +x v2ray
+sudo wget -N --no-check-certificate "https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip" && sudo chmod +x xray
+#sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/api" && sudo chmod +x api
+#sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/server.proto"
 sudo wget -N --no-check-certificate "https://github.com/v2fly/geoip/releases/latest/download/geoip.dat"
 sudo wget -N --no-check-certificate "https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat"
 sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/geosite.dat"
 sudo wget -N --no-check-certificate "https://github.com/bootmortis/iran-hosted-domains/releases/latest/download/iran.dat"
 sudo wget -N --no-check-certificate "https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat"
+
+sudo unzip Xray-linux-64.zip && sudo rm -rf Xray-linux-64.zip;
 
 sudo npm install @grpc/grpc-js
 sudo npm install @grpc/proto-loader
@@ -126,26 +128,21 @@ cat > /usr/local/x-ui/bin/config.json <<EOF
     "dns": null,
     "fakeDns": null,
     "inbounds": [
-        {
-            "listen": "127.0.0.1",
-            "port": 8080,
-            "protocol": "dokodemo-door",
-            "settings": {
-                "address": "127.0.0.1"
-            },
-            "sniffing": null,
-            "streamSettings": null,
-            "tag": "api"
-        },
+        
 		{
             "listen": null,
             "port": 443,
             "protocol": "vmess",
             "settings": {
                 "clients": [
-                    
+                    {
+                        "id": "238cfa52-9ccf-45ce-9378-f5bedd78d8d8",
+                        "flow": "",
+						"level":0
+                    }
                 ],
                 "decryption": "none",
+				"disableInsecureEncryption": true,
                 "fallbacks": []
             },
             "sniffing": {
@@ -156,7 +153,7 @@ cat > /usr/local/x-ui/bin/config.json <<EOF
                 "enabled": true
             },
             "streamSettings": {
-                "network": "ws",
+                "network": "h2",
                 "security": "tls",
                 "tlsSettings": {
                     "certificates": [
@@ -167,13 +164,16 @@ cat > /usr/local/x-ui/bin/config.json <<EOF
                     ],
                     "serverName": "$configSSLDomain"
                 },
-                "wsSettings": {
-                    "headers": {},
-                    "path": "/delawebs"
+                "httpSettings": {
+                    "host": [
+					
+					],
+                    "path": "/238cfa52-9ccf-45ce-9378-f5bedd78d8d8-vm"
                 }
             },
-            "tag": "add_user"
+            "tag": "inbound_443"
         }
+		
     ],
     "log": null,
     "outbounds": [
@@ -199,13 +199,9 @@ cat > /usr/local/x-ui/bin/config.json <<EOF
     "policy": {
 	"levels": {
             "0": {
-                "inboundSpeed": "18mbps",
-                "outboundSpeed": "18mbps"
+                "handshake": 5,
+				"connIdle": 400
             }
-        },
-        "system": {
-            "statsInboundDownlink": false,
-            "statsInboundUplink": false
         }
     },
     "reverse": null,
@@ -279,10 +275,10 @@ cat > /usr/local/x-ui/bin/config.json <<EOF
 EOF
 sudo chmod 777 config.json
 
-cat > /etc/systemd/system/x-ui.service <<EOF 
+cat > /etc/systemd/system/xray.service <<EOF 
 
 [Unit]
-Description=x-ui Service
+Description=xray Service
 After=network.target
 Wants=network.target
 
@@ -291,7 +287,7 @@ Type=simple
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
 AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
 WorkingDirectory=/usr/local/x-ui/
-ExecStart=/usr/local/x-ui/bin/v2ray run -config /usr/local/x-ui/bin/config.json
+ExecStart=/usr/local/x-ui/bin/xray run -config /usr/local/x-ui/bin/config.json
 Restart=on-failure
 RestartPreventExitStatus=23
 LimitNPROC=10000
@@ -302,42 +298,24 @@ WantedBy=multi-user.target
 
 EOF
 
-cat > /etc/systemd/system/api.service <<EOF 
 
-[Unit]
-Description=addClient.js
-After=network.target
+#sudo mkdir /var/www/html
+#cd /var/www/html/
+#sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/api.zip"
+#curl -sS https://getcomposer.org/installer | php
+#sudo mv composer.phar /usr/local/bin/composer
+#sudo unzip api.zip && sudo sudo rm -rf api.zip
+#sudo composer install
 
-[Service]
-Environment=NODE_PORT=5000
-Type=simple
-User=root
-ExecStart=/usr/bin/node /usr/local/x-ui/bin/addClient.js
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-
-EOF
-
-
-sudo mkdir /var/www/html
-cd /var/www/html/
-sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/api.zip"
-curl -sS https://getcomposer.org/installer | php
-sudo mv composer.phar /usr/local/bin/composer
-sudo unzip api.zip && sudo sudo rm -rf api.zip
-sudo composer install
-
-sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/grpc.zip"
-sudo unzip grpc.zip && sudo rm -rf grpc.zip
-sudo cp grpc.so /usr/lib/php/20170718/grpc.so;
+#sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/grpc.zip"
+#sudo unzip grpc.zip && sudo rm -rf grpc.zip
+#sudo cp grpc.so /usr/lib/php/20170718/grpc.so;
 #sudo chown root ServerJson && sudo chmod u=rwx,go=xr,+s ServerJson
 
 sudo service php7.2-fpm restart
 
 cd /root
-sudo systemctl daemon-reload && sudo systemctl enable x-ui.service && sudo systemctl start x-ui.service && sudo systemctl enable api.service && sudo systemctl start api.service
+sudo systemctl daemon-reload && sudo systemctl restart xray.service && sudo systemctl start xray.service
 sudo apt-get -y purge apache2
 sudo apt-get -y autoremove apache2
 sudo systemctl restart nginx
