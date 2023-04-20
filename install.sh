@@ -2,10 +2,10 @@
 
 
 sudo apt-get update
-sudo curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-sudo apt-get install -y nodejs
-sudo apt-get install -y npm
-sudo npm install -g npm@latest
+#sudo curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+#sudo apt-get install -y nodejs
+#sudo apt-get install -y npm
+#sudo npm install -g npm@latest
 sudo apt-get -y install nginx-full 
 
 sudo apt -y install ufw && sudo ufw allow 22 && sudo ufw allow 443 && sudo ufw allow 8443 && sudo ufw allow 8080 && sudo ufw allow 80 && sudo ufw enable
@@ -100,7 +100,7 @@ sudo mkdir /usr/local/x-ui/bin
 
 cd /usr/local/x-ui/bin
 #sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/v2ray" && sudo chmod +x v2ray
-sudo wget -N --no-check-certificate "https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip" && sudo chmod +x xray
+sudo wget -N --no-check-certificate "https://github.com/XTLS/Xray-core/releases/download/v1.8.1/Xray-linux-64.zip" && sudo chmod +x xray
 #sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/api" && sudo chmod +x api
 #sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/server.proto"
 sudo wget -N --no-check-certificate "https://github.com/v2fly/geoip/releases/latest/download/geoip.dat"
@@ -111,8 +111,8 @@ sudo wget -N --no-check-certificate "https://github.com/v2fly/domain-list-commun
 
 sudo unzip Xray-linux-64.zip && sudo rm -rf Xray-linux-64.zip;
 
-sudo npm install @grpc/grpc-js
-sudo npm install @grpc/proto-loader
+#sudo npm install @grpc/grpc-js
+#sudo npm install @grpc/proto-loader
 
 cat > /usr/local/x-ui/bin/config.json <<EOF 
 
@@ -125,7 +125,21 @@ cat > /usr/local/x-ui/bin/config.json <<EOF
         ],
         "tag": "api"
     },
-    "dns": null,
+    "dns": {
+		
+		"servers": [
+		{
+			"tag":"local",
+			"address": "https://1.1.1.1/dns-query",
+			"detour":"direct"
+		},
+		{
+			"tag":"block",
+			"address":"rcode://success"
+		}
+		]
+		
+	},
     "fakeDns": null,
     "inbounds": [
         
