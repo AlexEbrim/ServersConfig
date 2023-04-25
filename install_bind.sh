@@ -21,7 +21,7 @@ echo -n "Please enter your domain:"
 read configSSLDomain
 
 sudo certbot --nginx -d $configSSLDomain
-
+sudo systemctl enable nginx && sudo systemctl start nginx
 cat > /etc/systemd/system/bind.service <<EOF 
 
 [Unit]
