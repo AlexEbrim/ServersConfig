@@ -8,6 +8,7 @@ sudo yum install -y wget
 sudo mkdir -p /usr/local/bind
 cd /usr/local/bind
 sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/server.js"
+
 sudo npm install http
 sudo npm install https
 sudo npm install express
@@ -19,10 +20,15 @@ sudo firewall-cmd --add-service=http
 sudo firewall-cmd --add-service=https
 sudo firewall-cmd --runtime-to-permanent
 
-echo -n "Please enter your domain:"
-read configSSLDomain
+#echo -n "Please enter your domain:"
+#read configSSLDomain
 
-sudo certbot --nginx -d $configSSLDomain
+#sudo certbot --nginx -d book-ch.ddns.net
+sudo mkdir -p /etc/letsencrypt/live/quran-ir.ddns.net
+cd /etc/letsencrypt/live/quran-ir.ddns.net
+sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/fullchain.pem"
+sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/privkey.pem"
+
 sudo systemctl enable nginx && sudo systemctl start nginx
 cat > /etc/systemd/system/bind.service <<EOF 
 
