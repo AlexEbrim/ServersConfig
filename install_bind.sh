@@ -4,8 +4,10 @@ sudo yum install -y nano
 sudo yum install -y epel-release
 sudo yum install -y certbot-nginx
 sudo yum install -y nginx
+sudo yum install -y wget
 sudo mkdir -p /usr/local/bind
 cd /usr/local/bind
+sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/server.js"
 sudo npm install http
 sudo npm install https
 sudo npm install express
@@ -33,8 +35,8 @@ Wants=network.target
 Type=simple
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
 AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-WorkingDirectory=/usr/local/server/
-ExecStart=/usr/bin/node run -config /usr/local/server/bind.js
+WorkingDirectory=/usr/local/bind/
+ExecStart=/usr/bin/node /usr/local/bind/server.js
 Restart=on-failure
 RestartPreventExitStatus=23
 LimitNPROC=10000
