@@ -5,8 +5,8 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 
 var options = {
-  cert: fs.readFileSync("/etc/letsencrypt/live/book-ch.ddns.net/fullchain.pem", 'utf8'),
-  key: fs.readFileSync("/etc/letsencrypt/live/book-ch.ddns.net/privkey.pem", 'utf8')
+  cert: fs.readFileSync("/etc/letsencrypt/live/quran-ir.ddns.net/fullchain.pem", 'utf8'),
+  key: fs.readFileSync("/etc/letsencrypt/live/quran-ir.ddns.net/privkey.pem", 'utf8')
 };
 
 const wsProxy = createProxyMiddleware({
