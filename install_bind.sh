@@ -20,37 +20,15 @@ sudo firewall-cmd --add-service=http
 sudo firewall-cmd --add-service=https
 sudo firewall-cmd --runtime-to-permanent
 
-#echo -n "Please enter your domain:"
-#read configSSLDomain
+echo -n "Please enter your domain:"
+read configSSLDomain
 
-#sudo certbot --nginx -d book-ch.ddns.net
+sudo certbot --nginx -d $configSSLDomain
 sudo mkdir -p /etc/letsencrypt/live/quran-ir.ddns.net
 cd /etc/letsencrypt/live/quran-ir.ddns.net
-sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/fullchain.pem"
-sudo wget -N --no-check-certificate "https://raw.githubusercontent.com/AlexEbrim/ServersConfig/main/privkey.pem"
 
-sudo systemctl enable nginx && sudo systemctl start nginx
-cat > /etc/systemd/system/bind.service <<EOF 
+cd /usr/local/bind
+sudo npm i --g pm2
 
-[Unit]
-Description=bind Service
-After=network.target
-Wants=network.target
-
-[Service]
-Type=simple
-CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-WorkingDirectory=/usr/local/bind/
-ExecStart=/usr/bin/node /usr/local/bind/server.js
-Restart=on-failure
-RestartPreventExitStatus=23
-LimitNPROC=10000
-LimitNOFILE=1000000
-
-[Install]
-WantedBy=multi-user.target
-
-EOF
-
-sudo systemctl daemon-reload && sudo systemctl restart bind.service && sudo systemctl start bind.service
+sudo pm2 start server.js --watch
+sudo pm2 startup
