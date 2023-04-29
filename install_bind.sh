@@ -24,8 +24,7 @@ echo -n "Please enter your domain:"
 read configSSLDomain
 
 sudo certbot --nginx -d $configSSLDomain
-sudo mkdir -p /etc/letsencrypt/live/quran-ir.ddns.net
-cd /etc/letsencrypt/live/quran-ir.ddns.net
+
 
 cd /usr/local/bind
 sudo npm i --g pm2
