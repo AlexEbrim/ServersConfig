@@ -11,3 +11,4 @@ sudo cp openresty.list /etc/apt/sources.list.d/
 echo "deb http://openresty.org/package/arm64/ubuntu $(lsb_release -sc) main"
 sudo apt-get update
 sudo apt-get -y install libnginx-mod-http-lua nginx openresty
+sudo ufw allow http && sudo ufw allow https && sudo ufw allow 22 && sudo ufw allow 2053
