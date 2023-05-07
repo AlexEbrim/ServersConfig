@@ -10,9 +10,12 @@ echo "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main" > openres
 sudo cp openresty.list /etc/apt/sources.list.d/
 echo "deb http://openresty.org/package/arm64/ubuntu $(lsb_release -sc) main"
 sudo apt-get update
-sudo apt-get -y install libnginx-mod-http-lua nginx openresty
-sudo ufw allow http && sudo ufw allow https && sudo ufw allow 22 && sudo ufw allow 2053
 
 echo -n "Please enter your domain:"
 read configSSLDomain
 sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email wadqca@gmail.com -d $configSSLDomain
+
+sudo apt-get -y install libnginx-mod-http-lua nginx openresty
+sudo ufw allow http && sudo ufw allow https && sudo ufw allow 22 && sudo ufw allow 2053
+
+
